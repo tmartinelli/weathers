@@ -28,6 +28,10 @@ defmodule Weathers.WeatherService do
     { :ok, handle_body(body) }
   end
 
+  def handle_response({ _, %{status_code: 404, body: body} }) do
+    { :not_found, body }
+  end
+
   def handle_response({ _, %{status_code: _, body: body} }), do: { :error, body }
 
   defp handle_body(body) do

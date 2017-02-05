@@ -33,11 +33,19 @@ defmodule Weathers.CLI do
     System.halt(2)
   end
 
-  def print_data({ _, weather }) do
+  def print_data({ :ok, weather }) do
     IO.puts("Weather Infos")
     IO.puts("Location: #{weather[:location]}")
     IO.puts(weather[:updated_at])
     IO.puts("Weather: #{weather[:weather]}")
     IO.puts("Temperature: #{weather[:temperature]}")
+  end
+
+  def print_data({ :not_found, _weather }) do
+    IO.puts("Location not found!")
+  end
+
+  def print_data({ :error, data }) do
+    IO.puts("Fail to fetching weather data: #{data}")
   end
 end
