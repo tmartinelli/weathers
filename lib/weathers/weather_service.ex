@@ -1,5 +1,7 @@
 defmodule Weathers.WeatherService do
+  require Logger
   require Record
+
   Record.defrecord :xmlElement, Record.extract(:xmlElement, from_lib: "xmerl/include/xmerl.hrl")
   Record.defrecord :xmlText, Record.extract(:xmlText, from_lib: "xmerl/include/xmerl.hrl")
 
@@ -13,6 +15,7 @@ defmodule Weathers.WeatherService do
   ]
 
   def fetch_for(location) do
+    Logger.info("Fetching weather data for #{location}...")
     location
     |> weather_url
     |> HTTPoison.get
@@ -24,15 +27,21 @@ defmodule Weathers.WeatherService do
     "#{@national_weather_service_url}/xml/current_obs/#{upcased_location}.xml"
   end
 
-  def handle_response({ :ok, %{status_code: 200, body: body } }) do
+  def handle_response({ :ok, %{ status_code: 200, body: body } }) do
+    Logger.info("Success response")
+    Logger.debug(fn -> inspect(body) end)
     { :ok, handle_body(body) }
   end
 
-  def handle_response({ _, %{status_code: 404, body: body} }) do
+  def handle_response({ _, %{ status_code: 404, body: body } }) do
+    Logger.info("Not found response")
     { :not_found, body }
   end
 
-  def handle_response({ _, %{status_code: _, body: body} }), do: { :error, body }
+  def handle_response({ _, %{ status_code: status, body: body } }) do
+    Logger.error "Error #{status} returned"
+    { :error, body }
+  end
 
   defp handle_body(body) do
     body

@@ -28,24 +28,29 @@ defmodule Weathers.CLI do
   def process({ location }) do
     location
     |> Weathers.WeatherService.fetch_for
+    |> handle_response
     |> print_data
 
     System.halt(2)
   end
 
-  def print_data({ :ok, weather }) do
+  def handle_response({ :ok, body }), do: body
+
+  def handle_response({ :not_found, _body }) do
+    IO.puts("Location not found!")
+    System.halt(2)
+  end
+
+  def handle_response({ :error, body }) do
+    IO.puts("Error fetching data from weather service: #{body}")
+    System.halt(2)
+  end
+
+  def print_data(weather) do
     IO.puts("Weather Infos")
     IO.puts("Location: #{weather[:location]}")
     IO.puts(weather[:updated_at])
     IO.puts("Weather: #{weather[:weather]}")
     IO.puts("Temperature: #{weather[:temperature]}")
-  end
-
-  def print_data({ :not_found, _weather }) do
-    IO.puts("Location not found!")
-  end
-
-  def print_data({ :error, data }) do
-    IO.puts("Fail to fetching weather data: #{data}")
   end
 end
