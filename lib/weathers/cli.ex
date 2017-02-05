@@ -28,12 +28,12 @@ defmodule Weathers.CLI do
   def process({ location }) do
     location
     |> Weathers.WeatherService.fetch_for
-    |> print_weather
+    |> print_data
 
     System.halt(2)
   end
 
-  def print_weather({ _, weather }) do
+  def print_data({ _, weather }) do
     IO.puts("Weather Infos")
     IO.puts("Location: #{weather[:location]}")
     IO.puts(weather[:updated_at])
