@@ -4,7 +4,10 @@ defmodule Weathers.Mixfile do
   def project do
     [app: :weathers,
      version: "0.1.0",
+     name: "Weathers",
+     source_url: "https://github.com/tmartinelli/weathers",
      elixir: "~> 1.4",
+     escript: escript_config,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
@@ -31,5 +34,9 @@ defmodule Weathers.Mixfile do
     [
       {:httpoison, "~> 0.10.0"}
     ]
+  end
+
+  defp escript_config do
+    [main_module: Weathers.CLI]
   end
 end
